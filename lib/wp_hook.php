@@ -42,6 +42,10 @@ function get_role_capabilities($role_name)
 {
   $role = get_role($role_name);
   $role_capabilities = [];
+  
+  if ($role->capabilities === null) {
+    return $role_capabilities;
+  }
   foreach ($role->capabilities as $key => $value) {
     array_push($role_capabilities, $key);
   }

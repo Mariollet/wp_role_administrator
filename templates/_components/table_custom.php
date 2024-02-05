@@ -20,7 +20,7 @@
         <?php $roleCapabilities = get_role_capabilities($roleName->role); ?>
         <form class="editRoleForm" data-role="<?= $roleName->role ?>" method="post">
           <tr>
-            <td><?php echo esc_html($roleName->role); ?></td>
+            <td><?php echo esc_html(ucfirst($roleName->role)); ?></td>
             <td>
               <div class="badge-list">
                 <?php foreach ($roleCapabilities as $capability) : ?>
@@ -66,7 +66,7 @@
     $('#addRoleForm').submit(function(e) {
       e.preventDefault();
       // get roleName by value="roleName"
-      let roleName = $('#addRoleFormRoleName').val();
+      let roleName = $('#addRoleFormRoleName').val().toLowerCase();
 
       $.ajax({
         type: 'POST',
@@ -119,7 +119,12 @@
     $('.editRoleForm').submit(function(e) {
       e.preventDefault();
       let roleName = $(this).data('role');
-      let roleCapabilities = $(this).find('.editRoleFormRoleCapabilities').val();
+      // let roleCapabilities = $(this).find('.editRoleFormRoleCapabilities').val();
+
+      console.log(e.target);
+      // get roleCapabilities by value="roleCapabilities[]"
+      let roleCapabilities = $(this).closest('tr').find('.editRoleFormRoleCapabilities').val();
+      console.log($(this));
 
       // TODO: fix roleCapabilities is empty
 
