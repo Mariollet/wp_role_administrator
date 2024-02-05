@@ -4,11 +4,11 @@
       <tr>
         <th scope="col">
           <span>Role</span>
-          <a href="#TB_inline?&width=300&height=160&inlineId=add_role_modal" class="button-primary thickbox" data-action="add-role">Add Role</a>
+          <a href="#TB_inline?&width=300&height=180&inlineId=add_role_modal" class="button-primary thickbox" data-action="add-role">Add Role</a>
         </th>
         <th scope="col">
           <span>Capabilities</span>
-          <a href="#TB_inline?&width=300&height=160&inlineId=add_capability_modal" class="button-primary thickbox" data-action="add-capability" data-value="<?= $roleName ?>">Add Capability</a>
+          <a href="#TB_inline?&width=300&height=180&inlineId=add_capability_modal" class="button-primary thickbox" data-action="add-capability" data-value="<?= $roleName ?>">Add Capability</a>
         </th>
         <th scope="col">
           <span>Actions</span>
@@ -18,32 +18,32 @@
     <tbody>
       <?php foreach ($customRoles as $roleName) : ?>
         <?php $roleCapabilities = get_role_capabilities($roleName->role); ?>
-        <form class="editRoleForm" data-role="<?= $roleName->role ?>" method="post">
-          <tr>
-            <td><?php echo esc_html(ucfirst($roleName->role)); ?></td>
-            <td>
-              <div class="badge-list">
-                <?php foreach ($roleCapabilities as $capability) : ?>
-                  <span class="badge"><?= esc_html($capability); ?></span>
+        <tr>
+          <td><?php echo esc_html(ucfirst($roleName->role)); ?></td>
+          <td>
+            <div class="badge-list">
+              <?php foreach ($roleCapabilities as $capability) : ?>
+                <span class="badge"><?= esc_html($capability); ?></span>
+              <?php endforeach; ?>
+            </div>
+            <div class="editRoleFormContainer hidden">
+              <select id="edit-<?= $roleName->role ?>" class="editRoleFormRoleCapabilities" name="roleCapabilities[]" multiple="true">
+                <?php foreach ($customCapabilities as $capability) : ?>
+                  <option value="<?= $capability->capability; ?>" <?php if (in_array($capability->capability, $roleCapabilities)) echo 'selected'; ?>>
+                    <?= $capability->capability; ?>
+                  </option>
                 <?php endforeach; ?>
-              </div>
-              <div class="editRoleFormContainer hidden">
-                <select class="editRoleFormRoleCapabilities" name="roleCapabilities[]" multiple="true">
-                  <?php foreach ($customCapabilities as $capability) : ?>
-                    <option value="<?= $capability->capability; ?>" <?php if (in_array($capability->capability, $roleCapabilities)) echo 'selected'; ?>>
-                      <?= $capability->capability; ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </td>
-            <td>
+              </select>
+            </div>
+          </td>
+          <td>
+            <form class="editRoleForm" data-role="<?= $roleName->role ?>" method="post">
               <button type="button" class="button editRoleBtn">Edit</button>
               <button type="submit" class="button-primary hidden">Save</button>
               <a href="#TB_inline?&width=300&height=160&inlineId=delete_role_modal" class="button thickbox" data-action="delete-role" data-role="<?= $roleName->role ?>">Delete</a>
-            </td>
-          </tr>
-        </form>
+            </form>
+          </td>
+        </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
@@ -119,14 +119,8 @@
     $('.editRoleForm').submit(function(e) {
       e.preventDefault();
       let roleName = $(this).data('role');
-      // let roleCapabilities = $(this).find('.editRoleFormRoleCapabilities').val();
-
-      console.log(e.target);
-      // get roleCapabilities by value="roleCapabilities[]"
-      let roleCapabilities = $(this).closest('tr').find('.editRoleFormRoleCapabilities').val();
-      console.log($(this));
-
-      // TODO: fix roleCapabilities is empty
+      let roleCapabilities = $('#edit-' + roleName).val();
+      console.log($('#edit-' + roleName).val());
 
       $.ajax({
         type: 'POST',
@@ -137,8 +131,7 @@
           roleCapabilities: roleCapabilities
         },
         success: function(response) {
-          console.log(response);
-          // window.location.reload();
+          window.location.reload();
         }
       });
     });
